@@ -108,7 +108,7 @@ def create_window() -> None:
         player.move()
         x, y = player.position
 
-        fill_surrounding_chunks(window, background_image, (-x, -y))
+        fill_surrounding_chunks(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
 
         add_player(player, window)
         pygame.display.update()
