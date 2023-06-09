@@ -14,7 +14,7 @@ class Character(ABC):
         self.size = size
         self.position = position
         self.speed = speed
-        self.image = pygame.image.load(image_file)
+        self.image = pygame.image.load(image_file).convert_alpha()
         self.movement = (False, False, False, False)
         self.scale()
 
