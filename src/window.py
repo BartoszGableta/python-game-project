@@ -1,13 +1,13 @@
+from typing import Tuple
+import pygame
+from src.characters import Player
+
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
 DEFAULT_PLAYER_SPEED = 2
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
-
-import pygame
-from typing import Tuple
-from src.characters import Player
 
 def add_player(player, window) -> None:
     """
@@ -86,7 +86,7 @@ def create_window() -> None:
 
 
     # Loading the background image
-    background_image = pygame.image.load("assets/background.png")
+    background_image = pygame.image.load("assets/background.png").convert()
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # Game loop
@@ -96,10 +96,10 @@ def create_window() -> None:
             if event.type == pygame.QUIT:
                 running = False
             check_if_the_player_is_moving(player, event)
-        
+            
         x, y = player.position
 
         fill_surrounding_chunks(window, background_image, (-x, -y))
 
         add_player(player, window)
-        pygame.display.update() 
+        pygame.display.update()
