@@ -4,7 +4,7 @@ DEFAULT_PLAYER_SPEED = 5
 
 import pygame
 from typing import Tuple
-from characters import Player
+from src.characters import Player
 
 def add_player(player, window) -> None:
     """
@@ -61,7 +61,7 @@ def create_window() -> None:
     pygame.display.set_caption("Space survivor")
     #set_icon("spaceship.png")
     
-    player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "spaceship.png")
+    player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "assets/spaceship.png")
 
     # Game loop
     running = True
