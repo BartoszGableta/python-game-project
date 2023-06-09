@@ -21,16 +21,19 @@ def add_player(player, window) -> None:
     # Calculating center of the screen for displaying player model
     x_player = WINDOW_WIDTH / 2 - DEFAULT_PLAYER_SIZE[0] / 2
     y_player = WINDOW_HEIGHT / 2 - DEFAULT_PLAYER_SIZE[1] / 2
-    
+
     window.blit(players_spaceship, (x_player, y_player))
 
 def fill_surrounding_chunks(window, background, offset):
+    """
+    This function fills the background for area surrounding the player
+    """
     off_x, off_y = offset
 
     window.fill((0, 0, 0))
 
-    for dx in [-1, 0, 1]:
-        for dy in [-1, 0, 1]:
+    for dx in range(-1, 2):
+        for dy in range(-1, 2):
             x = dx * WINDOW_WIDTH + off_x
             y = dy * WINDOW_HEIGHT + off_y
             window.blit(background, (x, y))
@@ -86,10 +89,6 @@ def create_window() -> None:
     background_image = pygame.image.load("assets/background.png")
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    # Create variables to store the background position
-    bg_x = 0
-    bg_y = 0
-
     # Game loop
     running = True
     while running:
@@ -98,18 +97,9 @@ def create_window() -> None:
                 running = False
             check_if_the_player_is_moving(player, event)
         
-        bg_x -= player.movement[2] * player.speed  # Move left
-        bg_x += player.movement[0] * player.speed  # Move right
-        bg_y += player.movement[1] * player.speed  # Move up
-        bg_y -= player.movement[3] * player.speed  # Move down
+        x, y = player.position
 
-        fill_surrounding_chunks(window, background_image, (bg_x, bg_y))
-
-        if abs(bg_x) >= WINDOW_WIDTH:
-            bg_x = 0
-
-        if abs(bg_y) >= WINDOW_HEIGHT:
-            bg_y = 0
+        fill_surrounding_chunks(window, background_image, (-x, -y))
 
         add_player(player, window)
         pygame.display.update() 
