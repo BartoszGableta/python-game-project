@@ -22,8 +22,8 @@ def add_player(player, window) -> None:
     
     
     # Calculating center of the screen for displaying player model
-    x_player = WINDOW_WIDTH / 2 - DEFAULT_PLAYER_SIZE[0] / 2
-    y_player = WINDOW_HEIGHT / 2 - DEFAULT_PLAYER_SIZE[1] / 2
+    x_player = WINDOW_WIDTH / 2 - rotated_players_spaceship.get_width() / 2
+    y_player = WINDOW_HEIGHT / 2 - rotated_players_spaceship.get_height() / 2
 
     window.blit(rotated_players_spaceship, (x_player, y_player))
 
@@ -108,7 +108,7 @@ def create_window() -> None:
         player.move()
         x, y = player.position
 
-        fill_surrounding_chunks(window, background_image, (-x, -y))
+        fill_surrounding_chunks(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
 
         add_player(player, window)
         pygame.display.update()
