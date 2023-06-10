@@ -22,8 +22,8 @@ def add_player(player, window) -> None:
     
     
     # Calculating center of the screen for displaying player model
-    x_player = WINDOW_WIDTH / 2 - DEFAULT_PLAYER_SIZE[0] / 2
-    y_player = WINDOW_HEIGHT / 2 - DEFAULT_PLAYER_SIZE[1] / 2
+    x_player = WINDOW_WIDTH / 2 - rotated_players_spaceship.get_width() / 2
+    y_player = WINDOW_HEIGHT / 2 - rotated_players_spaceship.get_height() / 2
 
     window.blit(rotated_players_spaceship, (x_player, y_player))
 
