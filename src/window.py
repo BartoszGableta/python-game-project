@@ -1,10 +1,10 @@
 from typing import Tuple
 import pygame
-from src.characters import Player
+from src.characters import Player, Enemy
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
-DEFAULT_PLAYER_SPEED = 1
+DEFAULT_PLAYER_SPEED = .3
 DEFAULT_PLAYER_ROTATE = 0.5
 
 WINDOW_WIDTH = 800
@@ -27,6 +27,28 @@ def add_player(player, window) -> None:
 
     window.blit(rotated_players_spaceship, (x_player, y_player))
 
+def add_entity(entity, player, window):
+    """
+    This function adds an antity with respect to the player's position
+    """
+
+    # Creating entity image and getting it's information
+    entity_image = pygame.transform.scale(entity.image, entity.size)
+
+    rotated_entity_image = pygame.transform.rotate(entity.image, entity.angle)
+
+    ent_width, ent_height = entity.size
+    x_entity, y_entity = entity.position
+
+    x_player, y_player = player.position
+
+    # Calculating display position for the entity
+    x_entity = (WINDOW_WIDTH / 2) + (x_entity - x_player) - rotated_entity_image.get_width() / 2
+    y_entity = (WINDOW_HEIGHT / 2) - (y_entity - y_player) - rotated_entity_image.get_height() / 2
+
+    window.blit(rotated_entity_image, (x_entity, y_entity))
+
+
 def fill_surrounding_chunks(window, background, offset):
     """
     This function fills the background for area surrounding the player
@@ -38,7 +60,7 @@ def fill_surrounding_chunks(window, background, offset):
     for dx in range(-1, 2):
         for dy in range(-1, 2):
             x = dx * WINDOW_WIDTH + off_x
-            y = dy * WINDOW_HEIGHT + off_y
+            y = dy * WINDOW_HEIGHT - off_y
             window.blit(background, (x, y))
 
 
@@ -96,6 +118,9 @@ def create_window() -> None:
     background_image = pygame.image.load("assets/background.png").convert()
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
+    # Test entity
+    ent = Enemy((40, 40), (-200, -200), 0.1, "assets/enemy.png")
+
     # Game loop
     running = True
     while running:
@@ -108,7 +133,10 @@ def create_window() -> None:
         player.move()
         x, y = player.position
 
-        fill_surrounding_chunks(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
+        ent.rotate(player)
+        ent.move()
 
+        fill_surrounding_chunks(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
+        add_entity(ent, player, window)
         add_player(player, window)
         pygame.display.update()

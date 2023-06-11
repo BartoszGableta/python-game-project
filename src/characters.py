@@ -29,7 +29,7 @@ class Character(ABC):
         print(f"({x_change/self.speed},{y_change/self.speed})")
         print(f"Angle: {self.angle}")
         print(f"Position: {self.position}")
-        self.position = tuple(map(lambda i, j: i + j, (-x_change, -y_change), self.position))
+        self.position = tuple(map(lambda i, j: i + j, (-x_change, y_change), self.position))
 
     def rotate(self, angle_change):
         """
@@ -51,3 +51,35 @@ class Character(ABC):
 
 class Player(Character):
     pass
+
+class Enemy(Character):
+
+    def get_degree(self, x, y):
+        # Calculate the angle in radians
+        angle_rad = math.atan2(y, x)
+        
+        # Convert radians to degrees
+        angle_deg = math.degrees(angle_rad)
+        
+        # Ensure the degree is positive
+        if angle_deg < 0:
+            angle_deg += 360
+        
+        return (angle_deg - 90) % 360
+
+    def rotate(self, player):
+        """
+        This function sets the enemy rotation to be suited for player position.
+        """
+
+        x, y = self.position
+        x_player, y_player = player.position
+        print("Enemy pos:", (x, y))
+        x_offset = x_player - x
+        y_offset = y_player - y
+
+        print(self.get_degree(x_offset, y_offset))
+
+        self.angle = self.get_degree(x_offset, y_offset)
+
+
