@@ -10,30 +10,28 @@ DEFAULT_PLAYER_ROTATE = 0.5
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 
-def add_player(player: Player, window: pygame.Surface) -> None:
+def display_player(player: Player, window: pygame.Surface) -> None:
     """
     This function adds the ship the player controls to the window
     player: Player,
     window: Surface
     """
 
-    players_spaceship = pygame.transform.scale(player.image, player.size)   
-    rotated_players_spaceship = pygame.transform.rotate(players_spaceship, player.angle)
+    # Rotating player image
+    rotated_player_image = pygame.transform.rotate(player.image, player.angle)
     
     # Calculating center of the screen for displaying player model
-    x_player = WINDOW_WIDTH / 2 - rotated_players_spaceship.get_width() / 2
-    y_player = WINDOW_HEIGHT / 2 - rotated_players_spaceship.get_height() / 2
+    x_player = WINDOW_WIDTH / 2 - rotated_player_image.get_width() / 2
+    y_player = WINDOW_HEIGHT / 2 - rotated_player_image.get_height() / 2
 
-    window.blit(rotated_players_spaceship, (x_player, y_player))
+    window.blit(rotated_player_image, (x_player, y_player))
 
-def add_entity(entity: Character, player: Player, window: pygame.Surface) -> None:
+def display_entity(entity: Character, player: Player, window: pygame.Surface) -> None:
     """
     This function adds an antity with respect to the player's position
     """
 
-    # Creating entity image and getting it's information
-    entity_image = pygame.transform.scale(entity.image, entity.size)
-
+    # Rotating the entity image
     rotated_entity_image = pygame.transform.rotate(entity.image, entity.angle)
 
     x_entity, y_entity = entity.position
@@ -47,7 +45,7 @@ def add_entity(entity: Character, player: Player, window: pygame.Surface) -> Non
     window.blit(rotated_entity_image, (x_entity, y_entity))
 
 
-def fill_background(window: pygame.Surface, background: pygame.Surface, offset: Tuple[int, int]) -> None:
+def display_background(window: pygame.Surface, background: pygame.Surface, offset: Tuple[int, int]) -> None:
     """
     This function fills the background for area surrounding the player
     """
@@ -117,7 +115,7 @@ def create_window() -> None:
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
     #TODO Test entity [for future removal]
-    ent = Enemy((40, 40), (-200, -200), 0.1, "assets/enemy.png")
+    ent = Enemy((80, 80), (-200, -200), 0.1, "assets/enemy.png")
 
     # Game loop
     running = True
@@ -134,7 +132,7 @@ def create_window() -> None:
         ent.rotate(player)
         ent.move()
 
-        fill_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
-        add_entity(ent, player, window)
-        add_player(player, window)
+        display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
+        display_entity(ent, player, window)
+        display_player(player, window)
         pygame.display.update()

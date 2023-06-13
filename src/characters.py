@@ -16,9 +16,11 @@ class Character(ABC):
         self.size = size
         self.position = position
         self.speed = speed
-        self.image = pygame.image.load(image_file).convert_alpha()
         self.angle = 0
         self.direction_of_rotation = 0
+
+        image = pygame.image.load(image_file).convert_alpha()
+        self.image = pygame.transform.scale(image, size)
 
     def move(self) -> None:
         """
