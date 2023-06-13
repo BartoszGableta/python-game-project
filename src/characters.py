@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Tuple
 import pygame
 import math
 
@@ -11,7 +12,7 @@ class Character(ABC):
     image: str
     """
 
-    def __init__(self, size, position, speed, image_file) -> None:
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: float, image_file: str) -> None:
         self.size = size
         self.position = position
         self.speed = speed
@@ -19,7 +20,7 @@ class Character(ABC):
         self.angle = 0
         self.direction_of_rotation = 0
 
-    def move(self):
+    def move(self) -> None:
         """
         The function moves the ship controlled by the player,
         simulating the movement of the spaceship
@@ -31,7 +32,7 @@ class Character(ABC):
         print(f"Position: {self.position}")
         self.position = tuple(map(lambda i, j: i + j, (-x_change, y_change), self.position))
 
-    def rotate(self, angle_change):
+    def rotate(self, angle_change: float) -> None:
         """
         The function rotates the vessel
         by a given angle expressed in degrees
@@ -54,7 +55,7 @@ class Player(Character):
 
 class Enemy(Character):
 
-    def get_degree(self, x, y):
+    def get_degree(self, x: int, y: int) -> int:
         # Calculate the angle in radians
         angle_rad = math.atan2(y, x)
         
@@ -67,16 +68,19 @@ class Enemy(Character):
         
         return (angle_deg - 90) % 360
 
-    def rotate(self, player):
+    def rotate(self, player: Player) -> None:
         """
         This function sets the enemy rotation to be suited for player position.
         """
 
-        x, y = self.position
+        x_enemy, y_enemy = self.position
         x_player, y_player = player.position
-        print("Enemy pos:", (x, y))
-        x_offset = x_player - x
-        y_offset = y_player - y
+
+
+        print("Enemy pos:", (x_enemy, y_enemy))
+
+        x_offset = x_player - x_enemy
+        y_offset = y_player - y_enemy
 
         print(self.get_degree(x_offset, y_offset))
 
