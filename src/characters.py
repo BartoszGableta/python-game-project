@@ -3,59 +3,64 @@ from typing import Tuple
 import pygame
 import math
 
-class Character(ABC):
-    """
-    Class represents unidentified figure, e.g. of a player or an opponent
-    size: Tuple[int, int],
-    position: Tuple[int, int],
-    speed: float,
-    image: str
-    """
 
-    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: float, image_file: str) -> None:
-        self.size = size
+class Player(pygame.sprite.Sprite):
+    
+    def __init__(self, size, position, speed, image):
+        super().__init__()
+
+        image = pygame.image.load(image).convert_alpha()
+        self.orig_image = pygame.transform.scale(image, size)
+        self.image = self.orig_image
+
+        self.rect = self.image.get_rect()
+        self.rect.center = (400, 300)
+        
         self.position = position
         self.speed = speed
         self.angle = 0
-        self.direction_of_rotation = 0
 
-        image = pygame.image.load(image_file).convert_alpha()
-        self.image = pygame.transform.scale(image, size)
-
-    def move(self) -> None:
-        """
-        The function moves the ship controlled by the player,
-        simulating the movement of the spaceship
-        """
+    def move(self):
         x_change = self.speed * math.sin(math.radians(self.angle))
         y_change = self.speed * math.cos(math.radians(self.angle))
-        print(f"({x_change/self.speed},{y_change/self.speed})")
-        print(f"Angle: {self.angle}")
-        print(f"Position: {self.position}")
-        self.position = tuple(map(lambda i, j: i + j, (-x_change, y_change), self.position))
+        self.position = (self.position[0] - x_change, self.position[1] + y_change)
+        print('player pos', self.position)
 
-    def rotate(self, angle_change: float) -> None:
-        """
-        The function rotates the vessel
-        by a given angle expressed in degrees
-        """
-        if self.direction_of_rotation > 0:
-            if self.direction_of_rotation == 1:
-                self.angle += angle_change
-            else:
-                self.angle -= angle_change
+    def rotate_left(self, rotation):
+        self.angle =  (self.angle + rotation) % 360
 
-        while self.angle > 359:
-            self.angle -= 360
+    def rotate_right(self, rotation):
+        self.angle = (self.angle - rotation) % 360
 
-        while self.angle < 0:
-            self.angle += 360
+    def update(self):
+        self.move()
+        self.image = pygame.transform.rotate(self.orig_image, self.angle)
+        self.rect = self.image.get_rect()
+        self.rect.center = (400, 300)
 
 
-class Player(Character):
-    pass
+class Enemy(pygame.sprite.Sprite):
 
-class Enemy(Character):
+    def __init__(self, size, position, speed, image):
+        super().__init__()
+
+        image = pygame.image.load(image).convert_alpha()
+        self.orig_image = pygame.transform.scale(image, size)
+        self.image = self.orig_image
+
+        self.rect = self.image.get_rect()
+        self.rect.center = (200, 300)
+        
+        self.position = position
+        self.speed = speed
+        self.angle = 0
+
+    def move(self) -> None:
+
+        x_change = self.speed * math.sin(math.radians(self.angle))
+        y_change = self.speed * math.cos(math.radians(self.angle))
+
+        self.position = (self.position[0] - x_change, self.position[1] + y_change)
 
     def get_degree(self, x: int, y: int) -> int:
         # Calculate the angle in radians
@@ -71,21 +76,24 @@ class Enemy(Character):
         return (angle_deg - 90) % 360
 
     def rotate(self, player: Player) -> None:
-        """
-        This function sets the enemy rotation to be suited for player position.
-        """
 
         x_enemy, y_enemy = self.position
         x_player, y_player = player.position
 
-
-        print("Enemy pos:", (x_enemy, y_enemy))
-
         x_offset = x_player - x_enemy
         y_offset = y_player - y_enemy
 
-        print(self.get_degree(x_offset, y_offset))
-
         self.angle = self.get_degree(x_offset, y_offset)
 
+        self.image = pygame.transform.rotate(self.orig_image, self.angle)
+        center = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = center
 
+    def update(self, player):
+        self.rotate(player)
+
+        x, y = self.position
+        x_off, y_off = player.position
+        self.rect.center = (400 + (x - x_off), 300 - (y - y_off))
+        self.move()
