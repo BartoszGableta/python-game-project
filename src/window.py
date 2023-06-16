@@ -1,7 +1,7 @@
 from typing import Tuple
 import pygame
 from src.entities import Player
-from src.tools import EnemyGenerator
+from src.tools import EnemyGenerator, PointsCounter
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
@@ -66,6 +66,9 @@ def create_window() -> None:
     clock = pygame.time.Clock()
     start_time = pygame.time.get_ticks()
 
+    # Counter
+    counter = PointsCounter()
+
     # Game loop
     running = True
     while running:
@@ -82,6 +85,9 @@ def create_window() -> None:
         if pygame.time.get_ticks() - start_time >= 500:
             enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png")
             start_time = pygame.time.get_ticks()
+
+        counter.update()
+        counter.draw(window)
 
         enemy_generator.run()
         player_group.draw(window)
