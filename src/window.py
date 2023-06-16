@@ -87,12 +87,13 @@ def create_window() -> None:
             start_time = pygame.time.get_ticks()
 
         counter.update()
-        counter.draw(window)
 
         enemy_generator.run()
         player_group.draw(window)
         player_group.update()
 
+        counter.draw(window)
+        
         pygame.display.update()
 
         clock.tick(60)
