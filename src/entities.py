@@ -1,11 +1,15 @@
-from abc import ABC
+from abc import ABC, abstractclassmethod
 from typing import Tuple
 import pygame
 import math
 
+def euclides_distance(point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    return math.sqrt(((x1-x2)**2 + (y1-y2)**2))
 
-class Player(pygame.sprite.Sprite):
-    
+class Entity(pygame.sprite.Sprite, ABC):
+
     def __init__(self, size, position, speed, image):
         super().__init__()
 
@@ -19,11 +23,46 @@ class Player(pygame.sprite.Sprite):
         self.position = position
         self.speed = speed
         self.angle = 0
-
-    def move(self):
+    
+    def stop_collisions(self, enemies_speed, enemies_angle):
+        x_change = -enemies_speed * math.sin(math.radians(self.angle))
+        y_change = -enemies_speed * math.cos(math.radians(self.angle))
+        print(f"COLLISIONS STOP: {x_change, y_change}")
+        self.position = (self.position[0] - x_change, self.position[1] + y_change)
+        
+    
+    def move(self):   
         x_change = self.speed * math.sin(math.radians(self.angle))
         y_change = self.speed * math.cos(math.radians(self.angle))
         self.position = (self.position[0] - x_change, self.position[1] + y_change)
+        
+class Bullet(Entity):
+
+    def __init__(self, size, position, speed, image, damage):
+        super().__init__(size, position, speed, image)
+        self.damage = damage
+
+class Character(Entity):
+
+    def __init__(self, size, position, speed, image, life_points, bullet):
+        super().__init__(size, position, speed, image)
+        self.life_points = life_points
+        self.bullet = bullet
+
+    def is_alive(self):
+        return self.life_points <= 0
+    
+    def damage(self, damage_points):
+        self.life_points -= damage_points
+    
+
+class Player(Character):
+    
+    def __init__(self, size, position, speed, image, life_points):
+        super().__init__(size, position, speed, image, life_points)
+
+    def move(self):
+        super().move()
         print('player pos', self.position)
 
     def rotate_left(self, rotation):
@@ -39,28 +78,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (400, 300)
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(Character):
 
-    def __init__(self, size, position, speed, image):
-        super().__init__()
+    def __init__(self, size, position, speed, image, life_points):
+        super().__init__(size, position, speed, image, life_points)
 
-        image = pygame.image.load(image).convert_alpha()
-        self.orig_image = pygame.transform.scale(image, size)
-        self.image = self.orig_image
-
-        self.rect = self.image.get_rect()
-        self.rect.center = (200, 300)
-        
-        self.position = position
-        self.speed = speed
-        self.angle = 0
-
-    def move(self) -> None:
-
-        x_change = self.speed * math.sin(math.radians(self.angle))
-        y_change = self.speed * math.cos(math.radians(self.angle))
-
-        self.position = (self.position[0] - x_change, self.position[1] + y_change)
 
     def get_degree(self, x: int, y: int) -> int:
         # Calculate the angle in radians

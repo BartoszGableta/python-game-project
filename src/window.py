@@ -1,6 +1,7 @@
 from typing import Tuple
 import pygame
-from src.entities import Player, Enemy
+from src.entities import Player, Enemy, Bullet
+from src.collisions import check_collisions
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
@@ -35,7 +36,7 @@ def create_window() -> None:
 
     pygame.display.set_caption("Space survivor")
     
-    player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "assets/spaceship.png")
+    player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "assets/spaceship.png", 100)
 
 
     # Loading the background image
@@ -43,9 +44,9 @@ def create_window() -> None:
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
     #TODO Test entity [for future removal]
-    ent = Enemy((80, 80), (-200, -200), 0.1, "assets/enemy.png")
-    ent2 = Enemy((80, 80), (200, 200), 0.1, "assets/enemy.png")
-    ent3 = Enemy((80, 80), (-300, 300), 0.1, "assets/enemy.png")
+    ent = Enemy((80, 80), (-200, -200), 0.1, "assets/enemy.png", 100)
+    ent2 = Enemy((80, 80), (200, 200), 0.1, "assets/enemy.png", 100)
+    ent3 = Enemy((80, 80), (-300, 300), 0.1, "assets/enemy.png", 100)
     
 
     # Sprite groups
@@ -53,7 +54,7 @@ def create_window() -> None:
     player_group.add(player)
 
     enemies_group = pygame.sprite.Group()
-    enemies_group.add(ent, ent2, ent3)
+    enemies_group.add(ent)#, ent2, ent3)
 
     # Game loop
     running = True
@@ -78,5 +79,5 @@ def create_window() -> None:
         player_group.draw(window)
         player_group.update()
 
-
+        check_collisions(player, enemies_group)
         pygame.display.update()
