@@ -1,6 +1,6 @@
 from typing import Tuple
 import pygame
-from src.characters import Player
+from src.entities import Player
 from src.tools import EnemyGenerator
 
 DEFAULT_PLAYER_SIZE = (50, 50)
