@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         x_change = self.speed * math.sin(math.radians(self.angle))
         y_change = self.speed * math.cos(math.radians(self.angle))
         self.position = (self.position[0] - x_change, self.position[1] + y_change)
-        print('player pos', self.position)
+        #print('player pos', self.position)
 
     def rotate_left(self, rotation):
         self.angle =  (self.angle + rotation) % 360

@@ -1,11 +1,12 @@
 from typing import Tuple
 import pygame
 from src.characters import Player, Enemy
+from src.tools import EnemyGenerator
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
-DEFAULT_PLAYER_SPEED = .2
-DEFAULT_PLAYER_ROTATE = 0.2
+DEFAULT_PLAYER_SPEED = 3.5
+DEFAULT_PLAYER_ROTATE = 2
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -37,7 +38,6 @@ def create_window() -> None:
     
     player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "assets/spaceship.png")
 
-
     # Loading the background image
     background_image = pygame.image.load("assets/background.png").convert()
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -52,8 +52,11 @@ def create_window() -> None:
     player_group = pygame.sprite.GroupSingle()
     player_group.add(player)
 
-    enemies_group = pygame.sprite.Group()
-    enemies_group.add(ent, ent2, ent3)
+    enemy_generator = EnemyGenerator(25, player, 450, 600, window)
+
+    # Clock
+    clock = pygame.time.Clock()
+    start_time = pygame.time.get_ticks()
 
     # Game loop
     running = True
@@ -72,11 +75,16 @@ def create_window() -> None:
         x, y = player.position
 
         display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
-        
-        enemies_group.draw(window)
-        enemies_group.update(player)
+
+        if pygame.time.get_ticks() - start_time >= 500:
+            enemy_generator.generate_enemy()
+            start_time = pygame.time.get_ticks()
+
+        enemy_generator.run()
         player_group.draw(window)
         player_group.update()
 
 
         pygame.display.update()
+
+        clock.tick(60)
