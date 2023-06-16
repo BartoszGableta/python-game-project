@@ -1,49 +1,14 @@
 from typing import Tuple
 import pygame
-from src.characters import Player, Enemy, Character
+from src.entities import Player, Enemy
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
-DEFAULT_PLAYER_SPEED = .3
-DEFAULT_PLAYER_ROTATE = 0.5
+DEFAULT_PLAYER_SPEED = .2
+DEFAULT_PLAYER_ROTATE = 0.2
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
-
-def display_player(player: Player, window: pygame.Surface) -> None:
-    """
-    This function adds the ship the player controls to the window
-    player: Player,
-    window: Surface
-    """
-
-    # Rotating player image
-    rotated_player_image = pygame.transform.rotate(player.image, player.angle)
-    
-    # Calculating center of the screen for displaying player model
-    x_player = WINDOW_WIDTH / 2 - rotated_player_image.get_width() / 2
-    y_player = WINDOW_HEIGHT / 2 - rotated_player_image.get_height() / 2
-
-    window.blit(rotated_player_image, (x_player, y_player))
-
-def display_entity(entity: Character, player: Player, window: pygame.Surface) -> None:
-    """
-    This function adds an antity with respect to the player's position
-    """
-
-    # Rotating the entity image
-    rotated_entity_image = pygame.transform.rotate(entity.image, entity.angle)
-
-    x_entity, y_entity = entity.position
-
-    x_player, y_player = player.position
-
-    # Calculating display position for the entity
-    x_entity = (WINDOW_WIDTH / 2) + (x_entity - x_player) - rotated_entity_image.get_width() / 2
-    y_entity = (WINDOW_HEIGHT / 2) - (y_entity - y_player) - rotated_entity_image.get_height() / 2
-
-    window.blit(rotated_entity_image, (x_entity, y_entity))
-
 
 def display_background(window: pygame.Surface, background: pygame.Surface, offset: Tuple[int, int]) -> None:
     """
@@ -58,43 +23,6 @@ def display_background(window: pygame.Surface, background: pygame.Surface, offse
             x = dx * WINDOW_WIDTH + off_x
             y = dy * WINDOW_HEIGHT - off_y
             window.blit(background, (x, y))
-
-
-def check_if_the_player_is_moving(event: pygame.event.Event) -> int:
-    """
-    The function checks whether the player has pressed 
-    the movement button and return one of the four values:
-    -1 -> the player has released the button 
-    0 -> the player continues to turn the ship
-    1 -> the player turns right
-    2 -> the players turns left
-    """
-    
-    new_direction_of_rotation = 0
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_LEFT:
-            new_direction_of_rotation = 2
-        if event.key == pygame.K_RIGHT:
-            new_direction_of_rotation = 1
-    if event.type == pygame.KEYUP:
-        new_direction_of_rotation = -1
-    
-    if event.type != pygame.KEYUP and event.type != pygame.KEYDOWN:
-        new_direction_of_rotation = 0
-
-    return new_direction_of_rotation
-
-def rotate_the_player(player: Player, event: pygame.event.Event) -> None:
-    """
-    The function sets the direction of rotation for the player
-    based on the button selected by the player
-    """
-    new_direction_of_rotation = check_if_the_player_is_moving(event)
-    
-    if new_direction_of_rotation == 0:
-        new_direction_of_rotation = player.direction_of_rotation
-
-    player.direction_of_rotation = new_direction_of_rotation
 
 def create_window() -> None:
     """
@@ -116,6 +44,16 @@ def create_window() -> None:
 
     #TODO Test entity [for future removal]
     ent = Enemy((80, 80), (-200, -200), 0.1, "assets/enemy.png")
+    ent2 = Enemy((80, 80), (200, 200), 0.1, "assets/enemy.png")
+    ent3 = Enemy((80, 80), (-300, 300), 0.1, "assets/enemy.png")
+    
+
+    # Sprite groups
+    player_group = pygame.sprite.Group()
+    player_group.add(player)
+
+    enemies_group = pygame.sprite.Group()
+    enemies_group.add(ent, ent2, ent3)
 
     # Game loop
     running = True
@@ -123,16 +61,22 @@ def create_window() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            rotate_the_player(player, event)
-            
-        player.rotate(DEFAULT_PLAYER_ROTATE)
-        player.move()
+        
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_LEFT]:
+            player.rotate_left(DEFAULT_PLAYER_ROTATE)
+        if keys[pygame.K_RIGHT]:
+            player.rotate_right(DEFAULT_PLAYER_ROTATE)
+
         x, y = player.position
 
-        ent.rotate(player)
-        ent.move()
-
         display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
-        display_entity(ent, player, window)
-        display_player(player, window)
+        
+        enemies_group.draw(window)
+        enemies_group.update(player)
+        player_group.draw(window)
+        player_group.update()
+
+
         pygame.display.update()
