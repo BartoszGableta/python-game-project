@@ -28,6 +28,17 @@ def display_background(window: pygame.Surface, background: pygame.Surface, offse
             y = dy * WINDOW_HEIGHT - off_y
             window.blit(background, (x, y))
 
+def handle_key_pressed(player: Player) -> None:
+    """
+    Handles pressing the keys by the player
+    """
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        player.rotate_left(DEFAULT_PLAYER_ROTATE)
+    if keys[pygame.K_RIGHT]:
+        player.rotate_right(DEFAULT_PLAYER_ROTATE)
+
 def create_window() -> None:
     """
     Initialize the pygame, creates the window 
@@ -62,12 +73,7 @@ def create_window() -> None:
             if event.type == pygame.QUIT:
                 running = False
         
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT]:
-            player.rotate_left(DEFAULT_PLAYER_ROTATE)
-        if keys[pygame.K_RIGHT]:
-            player.rotate_right(DEFAULT_PLAYER_ROTATE)
+        handle_key_pressed(player)
 
         x, y = player.position
 
