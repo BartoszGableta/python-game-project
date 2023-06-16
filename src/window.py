@@ -49,7 +49,7 @@ def create_window() -> None:
     
 
     # Sprite groups
-    player_group = pygame.sprite.Group()
+    player_group = pygame.sprite.GroupSingle()
     player_group.add(player)
 
     enemies_group = pygame.sprite.Group()
