@@ -5,11 +5,13 @@ from src.tools import EnemyGenerator
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
-DEFAULT_PLAYER_SPEED = 3.5
+DEFAULT_PLAYER_SPEED = 5.5
 DEFAULT_PLAYER_ROTATE = 2
 
 DEFAULT_ENEMY_SIZE = (50, 50)
 DEFAULT_ENEMY_SPEED = 3
+
+MUSIC_VOLUME = 0.05
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -66,15 +68,21 @@ def create_window() -> None:
     clock = pygame.time.Clock()
     start_time = pygame.time.get_ticks()
 
+    # Music
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/main1.mp3")
+    pygame.mixer.music.set_volume(MUSIC_VOLUME)
+    pygame.mixer.music.play(loops=-1)
+
     # Game loop
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        
+            
         handle_key_pressed(player)
-
+        print(pygame.mixer.music.get_pos())
         x, y = player.position
 
         display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
