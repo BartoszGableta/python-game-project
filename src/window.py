@@ -1,11 +1,15 @@
 from typing import Tuple
 import pygame
-from src.entities import Player, Enemy
+from src.entities import Player
+from src.tools import EnemyGenerator
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
-DEFAULT_PLAYER_SPEED = .2
-DEFAULT_PLAYER_ROTATE = 0.2
+DEFAULT_PLAYER_SPEED = 3.5
+DEFAULT_PLAYER_ROTATE = 2
+
+DEFAULT_ENEMY_SIZE = (50, 50)
+DEFAULT_ENEMY_SPEED = 3
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -24,6 +28,17 @@ def display_background(window: pygame.Surface, background: pygame.Surface, offse
             y = dy * WINDOW_HEIGHT - off_y
             window.blit(background, (x, y))
 
+def handle_key_pressed(player: Player) -> None:
+    """
+    Handles pressing the keys by the player
+    """
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        player.rotate_left(DEFAULT_PLAYER_ROTATE)
+    if keys[pygame.K_RIGHT]:
+        player.rotate_right(DEFAULT_PLAYER_ROTATE)
+
 def create_window() -> None:
     """
     Initialize the pygame, creates the window 
@@ -37,23 +52,19 @@ def create_window() -> None:
     
     player = Player(DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_POSITION, DEFAULT_PLAYER_SPEED, "assets/spaceship.png")
 
-
     # Loading the background image
     background_image = pygame.image.load("assets/background.png").convert()
     background_image = pygame.transform.scale(background_image,(WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    #TODO Test entity [for future removal]
-    ent = Enemy((80, 80), (-200, -200), 0.1, "assets/enemy.png")
-    ent2 = Enemy((80, 80), (200, 200), 0.1, "assets/enemy.png")
-    ent3 = Enemy((80, 80), (-300, 300), 0.1, "assets/enemy.png")
-    
-
     # Sprite groups
-    player_group = pygame.sprite.Group()
+    player_group = pygame.sprite.GroupSingle()
     player_group.add(player)
 
-    enemies_group = pygame.sprite.Group()
-    enemies_group.add(ent, ent2, ent3)
+    enemy_generator = EnemyGenerator(125, player, 450, 600, window)
+
+    # Clock
+    clock = pygame.time.Clock()
+    start_time = pygame.time.get_ticks()
 
     # Game loop
     running = True
@@ -62,21 +73,20 @@ def create_window() -> None:
             if event.type == pygame.QUIT:
                 running = False
         
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT]:
-            player.rotate_left(DEFAULT_PLAYER_ROTATE)
-        if keys[pygame.K_RIGHT]:
-            player.rotate_right(DEFAULT_PLAYER_ROTATE)
+        handle_key_pressed(player)
 
         x, y = player.position
 
         display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
-        
-        enemies_group.draw(window)
-        enemies_group.update(player)
+
+        if pygame.time.get_ticks() - start_time >= 500:
+            enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png")
+            start_time = pygame.time.get_ticks()
+
+        enemy_generator.run()
         player_group.draw(window)
         player_group.update()
 
-
         pygame.display.update()
+
+        clock.tick(60)
