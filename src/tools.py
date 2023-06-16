@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-from src.characters import Enemy, Player
+from src.entities import Enemy, Player
 
 
 class EnemyGenerator:
