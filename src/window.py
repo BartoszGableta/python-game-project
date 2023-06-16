@@ -1,6 +1,6 @@
 from typing import Tuple
 import pygame
-from src.characters import Player, Enemy
+from src.entities import Player, Enemy
 
 DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
