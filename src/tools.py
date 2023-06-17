@@ -76,15 +76,15 @@ class EnemyGenerator:
 
 
 class PointsCounter:
-    def __init__(self, initial_time=0):
-        self.time = initial_time
+    def __init__(self, initial_points=0):
+        self.points = initial_points
         self.font = pygame.font.Font(None, 36)
     
     def update(self, points=1):
-        self.time += points
+        self.points += points
     
     def draw(self, screen):
-        text = self.font.render("{}".format(self.time), True, (255, 255, 255))
+        text = self.font.render("{}".format(self.points), True, (255, 255, 255))
         screen.blit(text, (10, 10))
 
     def update_and_draw(self, screen, points=1):

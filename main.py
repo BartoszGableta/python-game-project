@@ -1,6 +1,6 @@
 import pygame
 import pygame_menu
-from src import window
+from src import window, end_screen
 from typing import Callable
 
 WINDOW_WIDTH = 800
@@ -13,7 +13,10 @@ def start_game() -> None:
     """
 
     pygame.mixer.music.stop()
-    window.create_window()
+    points = window.create_window()
+    print(points)
+    end_screen.end_game(points)
+    pygame.mixer.music.play(-1)
 
 def create_sound(sound_file: str, volume: float) -> Callable[[None], None]:
     """

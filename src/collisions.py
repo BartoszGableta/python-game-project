@@ -60,15 +60,17 @@ def check_player_bullet_hits(bullets: pygame.sprite.Group, enemies: pygame.sprit
         for hit in gets_hit:
             if hit.damage(bullet.damage):
                 callback_when_killed()
-                print('he')
             bullet.kill()
 
 
-def check_enemies_bullet_hits(bullets: pygame.sprite.Group, player: Character):
+def check_enemies_bullet_hits(bullets: pygame.sprite.Group, player: Character) -> bool:
     """
-    Calculates whether enemies' bullets hit the player
+    Calculates whether enemies' bullets hit the player.
+    Return bool value indicating if the player is dead.
     """
     gets_hit = pygame.sprite.spritecollide(player, bullets, False, pygame.sprite.collide_mask)
     for hit in gets_hit:
         player.damage(hit.damage)
         hit.kill()
+        return True
+    return False
