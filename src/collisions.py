@@ -2,6 +2,7 @@ import pygame
 import math
 import sys
 from src.entities import Character
+from typing import Callable
 
 DEFAULT_DAMAGE_POINTS = 5
 
@@ -49,7 +50,7 @@ def furthest_bullet_for_angle(bullets: pygame.sprite.Group):
 
     return [v for v in furthest_bullets.values()]
 
-def check_player_bullet_hits(bullets: pygame.sprite.Group, enemies: pygame.sprite.Group):
+def check_player_bullet_hits(bullets: pygame.sprite.Group, enemies: pygame.sprite.Group, callback_when_killed=(lambda : None)):
     """
     Calculates whether the player's bullets hit enemies
     """
@@ -57,7 +58,9 @@ def check_player_bullet_hits(bullets: pygame.sprite.Group, enemies: pygame.sprit
     for bullet in important_bullets:
         gets_hit = pygame.sprite.spritecollide(bullet, enemies, False, pygame.sprite.collide_mask)
         for hit in gets_hit:
-            hit.damage(bullet.damage)
+            if hit.damage(bullet.damage):
+                callback_when_killed()
+                print('he')
             bullet.kill()
 
 

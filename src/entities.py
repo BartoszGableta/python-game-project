@@ -74,10 +74,16 @@ class Character(Entity):
     def is_alive(self) -> bool:
         return self.life_points > 0
     
-    def damage(self, damage_points) -> None:
+    def damage(self, damage_points) -> bool:
+        """
+        Function that deals damage to a character.
+        It returns a bool value indicating if the character was killed.
+        """
         self.life_points -= damage_points
         if not self.is_alive():
             self.kill()
+            return True
+        return False
     
     def shot(self) -> Bullet:
         bullet_speed, bullet_damage, bullet_size, bullet_image = self.bullet
