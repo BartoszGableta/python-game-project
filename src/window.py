@@ -45,7 +45,6 @@ def create_window() -> None:
     and starts game loop
     """
 
-    pygame.init()
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
     pygame.display.set_caption("Space survivor")
@@ -72,6 +71,8 @@ def create_window() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
+                exit()
         
         handle_key_pressed(player)
 
