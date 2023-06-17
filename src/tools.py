@@ -85,8 +85,6 @@ class PointsCounter:
     
     def draw(self, screen):
         text = self.font.render("{}".format(self.time), True, (255, 255, 255))
-        # text_rect = text.get_rect(center=(screen.get_width() // 2, 20))
-        # screen.blit(text, text_rect)
         screen.blit(text, (10, 10))
 
     def update_and_draw(self, screen, points=1):
