@@ -61,7 +61,6 @@ def new_bullet_for_group(group: pygame.sprite.Group, bullets: pygame.sprite.Grou
         bullet = character.shot()
         bullets.add(bullet)
 
-
 def create_window() -> None:
     """
     Initialize the pygame, creates the window 
@@ -121,7 +120,7 @@ def create_window() -> None:
             start_time = pygame.time.get_ticks()
 
 
-        counter.update()
+        counter.update_and_draw(window)
 
         players_bullets.draw(window)
         players_bullets.update(player)
@@ -132,12 +131,9 @@ def create_window() -> None:
         enemy_generator.run()
         player_group.draw(window)
         player_group.update()
-
-
-        counter.draw(window)
         
         check_collisions(player, enemy_generator.enemies)
-        check_player_bullet_hits(players_bullets, enemy_generator.enemies)
+        check_player_bullet_hits(players_bullets, enemy_generator.enemies, lambda : counter.update_and_draw(window, 100))
         check_enemies_bullet_hits(enemies_bullets, player)
 
         pygame.display.update()
