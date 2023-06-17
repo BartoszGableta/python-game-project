@@ -1,6 +1,6 @@
-from src import window
 import pygame
 import pygame_menu
+from src import window
 from typing import Callable
 
 WINDOW_WIDTH = 800
@@ -32,7 +32,7 @@ def run_background_theme(music_file: str) -> None:
     This function runs the background theme.
     """
     pygame.mixer.music.load(music_file)
-    pygame.mixer.music.set_volume(0.1)
+    pygame.mixer.music.set_volume(0.05)
     pygame.mixer.music.play(-1)
 
 def create_menu(theme: pygame_menu.Theme) -> pygame_menu.Menu:
@@ -43,9 +43,11 @@ def create_menu(theme: pygame_menu.Theme) -> pygame_menu.Menu:
 
     play_button_sound = create_sound('assets/click-sound.wav', 0.1)
     
-    menu.add.button('Play', start_game, onselect=play_button_sound)
-    menu.add.button('Leaderboard', pygame_menu.events.EXIT, onselect=play_button_sound)
-    menu.add.button('Exit', pygame_menu.events.EXIT, onselect=play_button_sound)
+    selection_effect = pygame_menu.widgets.HighlightSelection(border_width=0)
+
+    menu.add.button('Play', start_game, onselect=play_button_sound, selection_effect=selection_effect)
+    menu.add.button('Leaderboard', pygame_menu.events.EXIT, onselect=play_button_sound, selection_effect=selection_effect)
+    menu.add.button('Exit', pygame_menu.events.EXIT, onselect=play_button_sound, selection_effect=selection_effect)
 
     return menu
 
@@ -56,18 +58,20 @@ def main() -> None:
 
     pygame.init()
 
+    pygame.display.set_caption("Space survivor")
+
     surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    theme = pygame_menu.Theme(background_color=(0, 0, 0, 0), # transparent background
+    theme = pygame_menu.Theme(
+                background_color=(0, 0, 0, 0), # transparent background
                 title_font_shadow=True,
-                title_background_color=(4, 47, 126),
                 title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
                 widget_font=pygame_menu.font.FONT_8BIT,
                 widget_font_size=50)
 
     myimage = pygame_menu.baseimage.BaseImage(
-    image_path="assets/main-menu2.jpg",
-    drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
+        image_path="assets/main-menu.jpg",
+        drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
     )
     theme.background_color = myimage
 
