@@ -73,3 +73,18 @@ class EnemyGenerator:
         self.recycle_enemies()
         self.enemies.update(self.player)
         self.enemies.draw(self.window)
+
+
+class PointsCounter:
+    def __init__(self, initial_time=0):
+        self.time = initial_time
+        self.font = pygame.font.Font(None, 36)
+    
+    def update(self):
+        self.time += 1
+    
+    def draw(self, screen):
+        text = self.font.render("{}".format(self.time), True, (255, 255, 255))
+        # text_rect = text.get_rect(center=(screen.get_width() // 2, 20))
+        # screen.blit(text, text_rect)
+        screen.blit(text, (10, 10))

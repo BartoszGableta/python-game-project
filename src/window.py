@@ -1,6 +1,6 @@
 from typing import Tuple
 import pygame
-from src.tools import EnemyGenerator
+from src.tools import EnemyGenerator, PointsCounter
 from src.entities import Player, Enemy, Bullet, Character
 from src.collisions import check_collisions, check_player_bullet_hits, check_enemies_bullet_hits
 
@@ -92,6 +92,9 @@ def create_window() -> None:
     clock = pygame.time.Clock()
     start_time = pygame.time.get_ticks()
 
+    # Counter
+    counter = PointsCounter()
+
     # Game loop
     running = True
     while running:
@@ -117,6 +120,9 @@ def create_window() -> None:
             enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png")
             start_time = pygame.time.get_ticks()
 
+
+        counter.update()
+
         players_bullets.draw(window)
         players_bullets.update(player)
 
@@ -127,9 +133,13 @@ def create_window() -> None:
         player_group.draw(window)
         player_group.update()
 
+
+        counter.draw(window)
+        
         check_collisions(player, enemy_generator.enemies)
         check_player_bullet_hits(players_bullets, enemy_generator.enemies)
         check_enemies_bullet_hits(enemies_bullets, player)
+
         pygame.display.update()
 
         clock.tick(60)
