@@ -1,12 +1,15 @@
-from abc import ABC
+from abc import ABC, abstractclassmethod
 from typing import Tuple
 import pygame
 import math
 
 
-class Player(pygame.sprite.Sprite):
-    
-    def __init__(self, size, position, speed, image):
+class Entity(pygame.sprite.Sprite, ABC):
+    """
+    The class symbolises an entity which is an element that moves on the screen
+    """
+
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: int, image: str, angle: int) -> None:
         super().__init__()
 
         image = pygame.image.load(image).convert_alpha()
@@ -16,51 +19,102 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (400, 300)
         
+        self.angle = angle
         self.position = position
         self.speed = speed
-        self.angle = 0
-
-    def move(self):
+        self.angle = angle
+    
+    def stop_collisions(self, enemies_speed: int) -> None:
+        x_change = -enemies_speed * math.sin(math.radians(self.angle))
+        y_change = -enemies_speed * math.cos(math.radians(self.angle))
+        self.position = (self.position[0] - x_change, self.position[1] + y_change)
+        
+    
+    def move(self) -> None:   
         x_change = self.speed * math.sin(math.radians(self.angle))
         y_change = self.speed * math.cos(math.radians(self.angle))
         self.position = (self.position[0] - x_change, self.position[1] + y_change)
-        #print('player pos', self.position)
+        
+class Bullet(Entity):
+    """
+    The class symbolises the bullet that the characters shoot.
+    """
 
-    def rotate_left(self, rotation):
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: int, image: str, angle: int, damage: int) -> None:
+        super().__init__(size, position, speed, image, angle)
+        self.damage = damage
+        self.image = pygame.transform.rotate(self.orig_image, angle+45) #+45 because the picture is rotated xdd note to change it
+
+    def thrown_away(self, x_diff: int, y_diff: int) -> None:
+        if (x_diff > 400 or x_diff < -400) and (y_diff > 300 or y_diff < -300):
+            self.kill()
+
+
+    def update(self, player: Entity) -> None:
+        self.move()
+        self.rect = self.image.get_rect()
+        
+        x, y = self.position
+        x_off, y_off = player.position
+        x_diff, y_diff = (x - x_off), (y - y_off)
+        self.rect.center = (400 + x_diff, 300 - y_diff)
+        self.distance_from_player = math.sqrt(x_diff**2 + y_diff**2)
+
+
+class Character(Entity):
+    """
+    The class symbolises a character, or entity, that can inflict and receive damage
+    """
+
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: int, image: str, angle: int, life_points: int, bullet: Tuple[Tuple[int, int], int, int, str]) -> None:
+        super().__init__(size, position, speed, image, angle)
+        self.life_points = life_points
+        self.bullet = bullet
+
+    def is_alive(self) -> bool:
+        return self.life_points > 0
+    
+    def damage(self, damage_points) -> None:
+        self.life_points -= damage_points
+        if not self.is_alive():
+            self.kill()
+    
+    def shot(self) -> Bullet:
+        bullet_speed, bullet_damage, bullet_size, bullet_image = self.bullet
+        return Bullet(bullet_size, self.position, bullet_speed, bullet_image, self.angle, bullet_damage)
+    
+    
+
+class Player(Character):
+    """
+    The class symbolises the player
+    """
+    
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: int, image: str, angle: int, life_points: int, bullet: Tuple[Tuple[int, int], int, int, str]) -> None:
+        super().__init__(size, position, speed, image, angle, life_points, bullet)
+        
+
+    def rotate_left(self, rotation: int) -> None:
         self.angle =  (self.angle + rotation) % 360
 
-    def rotate_right(self, rotation):
+    def rotate_right(self, rotation: int) -> None:
         self.angle = (self.angle - rotation) % 360
 
-    def update(self):
+    def update(self) -> None:
         self.move()
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = (400, 300)
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(Character):
+    """
+    The class symbolises the enemy
+    """
 
-    def __init__(self, size, position, speed, image):
-        super().__init__()
+    def __init__(self, size: Tuple[int, int], position: Tuple[int, int], speed: int, image: str, angle: int, life_points: int, bullet: Tuple[Tuple[int, int], int, int, str]) -> None:
+        super().__init__(size, position, speed, image, angle, life_points, bullet)
 
-        image = pygame.image.load(image).convert_alpha()
-        self.orig_image = pygame.transform.scale(image, size)
-        self.image = self.orig_image
-
-        self.rect = self.image.get_rect()
-        self.rect.center = (200, 300)
-        
-        self.position = position
-        self.speed = speed
-        self.angle = 0
-
-    def move(self) -> None:
-
-        x_change = self.speed * math.sin(math.radians(self.angle))
-        y_change = self.speed * math.cos(math.radians(self.angle))
-
-        self.position = (self.position[0] - x_change, self.position[1] + y_change)
 
     def get_degree(self, x: int, y: int) -> int:
         # Calculate the angle in radians
@@ -90,10 +144,12 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = center
 
-    def update(self, player):
+    def update(self, player) -> None:
         self.rotate(player)
 
         x, y = self.position
         x_off, y_off = player.position
-        self.rect.center = (400 + (x - x_off), 300 - (y - y_off))
+        x_diff, y_diff = (x - x_off), (y - y_off)
+        self.rect.center = (400 + x_diff, 300 - y_diff)
+        self.distance_from_player = math.sqrt(x_diff**2 + y_diff**2)
         self.move()
