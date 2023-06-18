@@ -46,7 +46,7 @@ class EnemyGenerator:
         """
         Method for generating an enemy
         """
-        print(len(self.enemies))
+        #print(len(self.enemies))
         player_x, player_y = self.player.position
         player_x, player_y = int(player_x), int(player_y)
         
