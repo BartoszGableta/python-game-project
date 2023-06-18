@@ -70,7 +70,7 @@ def create_window() -> None:
 
     # Music
     pygame.mixer.init()
-    pygame.mixer.music.load("assets/main1.mp3")
+    pygame.mixer.music.load("assets/game-theme.mp3")
     pygame.mixer.music.set_volume(MUSIC_VOLUME)
     pygame.mixer.music.play(loops=-1)
 
