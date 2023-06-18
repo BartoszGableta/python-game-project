@@ -13,7 +13,7 @@ def start_game() -> None:
     points = window.create_window()
     print(points)
     end_screen.end_game(points)
-    run_background_theme('assets/main-menu-music.mp3')
+    run_background_theme(const.MAIN_MENU_MUSIC)
 
 def create_sound(sound_file: str, volume: float) -> Callable[[None], None]:
     """

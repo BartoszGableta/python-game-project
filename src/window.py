@@ -69,10 +69,10 @@ def create_window() -> None:
     
 
     players_bullet = (
+        const.DEFAULT_PLAYER_BULLET_SPEED, 
         const.DEFAULT_PLAYER_BULLET_DAMAGE, 
         const.DEFAULT_PLAYER_BULLET_SIZE, 
-        const.DEFAULT_PLAYER_BULLET_IMAGE,
-        const.DEFAULT_PLAYER_BULLET_SPEED, 
+        const.PLAYER_BULLET_IMAGE
         )
     
     player = Player(
@@ -109,7 +109,7 @@ def create_window() -> None:
 
     # Music
     pygame.mixer.init()
-    pygame.mixer.music.load("assets/game-theme.mp3")
+    pygame.mixer.music.load(const.GAME_MUSIC)
     pygame.mixer.music.set_volume(const.MUSIC_VOLUME)
     pygame.mixer.music.play(loops=-1)
 

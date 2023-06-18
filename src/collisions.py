@@ -30,8 +30,8 @@ def check_collisions(sprite_player: Character, sprites: pygame.sprite.Group):
     for enemy in gets_hit:
         enemy.stop_collisions(sprite_player.speed)
         sprite_player.stop_collisions(enemy.speed)
-        sprite_player.damage(const.DEFAULT_DAMAGE_POINTS)
-        enemy.damage(const.DEFAULT_DAMAGE_POINTS)
+        sprite_player.damage(const.COLLISION_DAMAGE)
+        enemy.damage(const.COLLISION_DAMAGE)
 
 def furthest_bullet_for_angle(bullets: pygame.sprite.Group):
     """
