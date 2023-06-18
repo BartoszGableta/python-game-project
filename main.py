@@ -1,7 +1,6 @@
 import pygame
 import pygame_menu
-from src import window
-from src import const
+from src import window, end_screen, const
 from typing import Callable
 
 
@@ -11,7 +10,10 @@ def start_game() -> None:
     """
 
     pygame.mixer.music.stop()
-    window.create_window()
+    points = window.create_window()
+    print(points)
+    end_screen.end_game(points)
+    run_background_theme('assets/main-menu-music.mp3')
 
 def create_sound(sound_file: str, volume: float) -> Callable[[None], None]:
     """

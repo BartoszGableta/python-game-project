@@ -3,18 +3,26 @@ import math
 import random
 from src.entities import Enemy, Player
 
+DEFAULT_ENEMIES_BULLET_SIZE = (10, 10)
+DEFAULT_ENEMIES_BULLET_SPEED = 10
+DEFAULT_ENEMIES_BULLET_DAMAGE = 20
+DEFAULT_ENEMIES_BULLET_IMAGE = "assets/fire.png"
+ENEMIES_BULLET = (DEFAULT_ENEMIES_BULLET_SPEED, DEFAULT_ENEMIES_BULLET_DAMAGE, DEFAULT_ENEMIES_BULLET_SIZE, DEFAULT_ENEMIES_BULLET_IMAGE)
+
+DEFAULT_ENEMIES_ANGLE = 0
 
 class EnemyGenerator:
     """
     Class for generating and maintaining Enemies
     """
 
-    def __init__(self, limit: int, player: Player, generation_distance: int, max_distance: int, window: pygame.surface) -> None:
+    def __init__(self, limit: int, player: Player, generation_distance: int, max_distance: int, window: pygame.surface, enemies_hp) -> None:
         self.limit = limit
         self.player = player
         self.generation_distance = generation_distance
         self.max_distance = max_distance
         self.window = window
+        self.enemies_hp = enemies_hp
 
         self.enemies = pygame.sprite.Group()
         
@@ -38,7 +46,7 @@ class EnemyGenerator:
         """
         Method for generating an enemy
         """
-        print(len(self.enemies))
+        #print(len(self.enemies))
         player_x, player_y = self.player.position
         player_x, player_y = int(player_x), int(player_y)
         
@@ -48,7 +56,7 @@ class EnemyGenerator:
 
             position = (player_x + x, player_y + y)
 
-            self.enemies.add(Enemy(size, position, speed, image))
+            self.enemies.add(Enemy(size, position, speed, image, DEFAULT_ENEMIES_ANGLE, self.enemies_hp, ENEMIES_BULLET))
 
     def recycle_enemies(self) -> None:
         """
@@ -65,3 +73,21 @@ class EnemyGenerator:
         self.recycle_enemies()
         self.enemies.update(self.player)
         self.enemies.draw(self.window)
+
+
+class PointsCounter:
+    def __init__(self, initial_points=0):
+        self.points = initial_points
+        self.font = pygame.font.Font(None, 36)
+    
+    def update(self, points=1):
+        self.points += points
+    
+    def draw(self, screen):
+        text = self.font.render("{}".format(self.points), True, (255, 255, 255))
+        text_rect = text.get_rect(center=(screen.get_width() // 2, 20))
+        screen.blit(text, text_rect)
+
+    def update_and_draw(self, screen, points=1):
+        self.update(points)
+        self.draw(screen)
