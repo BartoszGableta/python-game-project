@@ -134,7 +134,10 @@ def create_window() -> None:
         
         check_collisions(player, enemy_generator.enemies)
         check_player_bullet_hits(players_bullets, enemy_generator.enemies, lambda : counter.update_and_draw(window, 100))
-        check_enemies_bullet_hits(enemies_bullets, player)
+        
+        if check_enemies_bullet_hits(enemies_bullets, player):
+            running = False
+            return counter.points
 
         pygame.display.update()
 
