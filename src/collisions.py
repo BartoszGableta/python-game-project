@@ -21,7 +21,7 @@ def get_closest_enemy(enemies: pygame.sprite.Group):
     
     return closest_enemies
 
-def check_collisions(sprite_player: Character, sprites: pygame.sprite.Group):
+def check_collisions(sprite_player: Character, sprites: pygame.sprite.Group, callback_when_killed=(lambda : None)):
     """
     Calculates whether there is a collision between the player and the opponents 
     (if there is it will subtract the life points of both characters that collided)
@@ -31,7 +31,9 @@ def check_collisions(sprite_player: Character, sprites: pygame.sprite.Group):
         enemy.stop_collisions(sprite_player.speed)
         sprite_player.stop_collisions(enemy.speed)
         sprite_player.damage(const.COLLISION_DAMAGE)
-        enemy.damage(const.COLLISION_DAMAGE)
+        if enemy.damage(const.COLLISION_DAMAGE):
+            callback_when_killed()
+            
 
 def furthest_bullet_for_angle(bullets: pygame.sprite.Group):
     """
