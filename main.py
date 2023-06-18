@@ -16,7 +16,7 @@ def start_game() -> None:
     points = window.create_window()
     print(points)
     end_screen.end_game(points)
-    pygame.mixer.music.play(-1)
+    run_background_theme('assets/main-menu-music.mp3')
 
 def create_sound(sound_file: str, volume: float) -> Callable[[None], None]:
     """

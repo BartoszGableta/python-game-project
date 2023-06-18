@@ -12,17 +12,27 @@ def save_result(points, nickname, menu):
         writer.writerow([points, nickname])
     menu.disable()
 
+def run_background_theme(music_file: str) -> None:
+    """
+    This function runs the background theme.
+    """
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.set_volume(0.05)
+    pygame.mixer.music.play(-1)
+
+
 def create_menu(theme, points):
     """
     This function creates a menu from given theme.
     """
     menu = pygame_menu.Menu('', WINDOW_WIDTH, WINDOW_HEIGHT, theme=theme)
-
-    #play_button_sound = create_sound('assets/click-sound.wav', 0.1)
     
-    menu.add.label('Congratulations you died')
-    menu.add.label('Enter your nickname')
-    menu.add.text_input('', onreturn=lambda nickname : save_result(points, nickname, menu))
+    menu.add.label('Congratulations you died', font_color=(255, 255, 255))
+    menu.add.vertical_margin(30)
+    menu.add.label(f'Score {points}', font_color=(255, 255, 255))
+    menu.add.label('Enter your nickname', font_color=(255, 255, 255))
+    menu.add.vertical_margin(10)
+    menu.add.text_input('', onreturn=lambda nickname : save_result(points, nickname, menu), maxwidth = 10)
 
     return menu
 
@@ -38,12 +48,12 @@ def end_game(points):
                 widget_font_size=30)
 
     myimage = pygame_menu.baseimage.BaseImage(
-        image_path="assets/main-menu.jpg",
+        image_path="assets/end-screen.jpg",
         drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
     )
     theme.background_color = myimage
 
-    #run_background_theme('assets/main-menu-music.mp3')
+    run_background_theme('assets/end-screen-music.mp3')
 
     menu = create_menu(theme, points)
     menu.mainloop(surface)
