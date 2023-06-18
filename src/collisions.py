@@ -70,7 +70,7 @@ def check_enemies_bullet_hits(bullets: pygame.sprite.Group, player: Character) -
     """
     gets_hit = pygame.sprite.spritecollide(player, bullets, False, pygame.sprite.collide_mask)
     for hit in gets_hit:
-        player.damage(hit.damage)
+        if player.damage(hit.damage):
+            return True
         hit.kill()
-        return True
     return False
