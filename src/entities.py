@@ -46,7 +46,7 @@ class Bullet(Entity):
         self.image = pygame.transform.rotate(self.orig_image, angle+45) #+45 because the picture is rotated xdd note to change it
 
     def thrown_away(self, x_diff: int, y_diff: int) -> None:
-        if (x_diff > 400 or x_diff < -400) and (y_diff > 300 or y_diff < -300):
+        if (x_diff > 400 or x_diff < -400) or (y_diff > 300 or y_diff < -300):
             self.kill()
 
 
@@ -59,6 +59,7 @@ class Bullet(Entity):
         x_diff, y_diff = (x - x_off), (y - y_off)
         self.rect.center = (400 + x_diff, 300 - y_diff)
         self.distance_from_player = math.sqrt(x_diff**2 + y_diff**2)
+        self.thrown_away(x_diff, y_diff)
 
 
 class Character(Entity):

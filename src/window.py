@@ -8,11 +8,11 @@ DEFAULT_PLAYER_SIZE = (50, 50)
 DEFAULT_PLAYER_POSITION = (0, 0)
 DEFAULT_PLAYER_SPEED = 3.5
 DEFAULT_PLAYER_ROTATE = 2
-DEFAULT_PLAYER_LIFE_POINTS = 100
+DEFAULT_PLAYER_LIFE_POINTS = 1000
 
 DEFAULT_PLAYER_BULLET_SIZE = (10, 10)
 DEFAULT_PLAYER_BULLET_SPEED = 8
-DEFAULT_PLAYER_BULLET_DAMAGE = 60
+DEFAULT_PLAYER_BULLET_DAMAGE = 50
 DEFAULT_PLAYER_BULLET_IMAGE = "assets/bullet.png"
 
 DEFAULT_ENEMY_SIZE = (50, 50)
@@ -60,6 +60,15 @@ def new_bullet_for_group(group: pygame.sprite.Group, bullets: pygame.sprite.Grou
     for character in group:
         bullet = character.shot()
         bullets.add(bullet)
+    
+def set_timer(time, callback):
+    start = 0
+    def timer():
+        nonlocal start
+        if pygame.time.get_ticks() - start > time:
+            callback()
+            start = pygame.time.get_ticks()
+    return timer
 
 def create_window() -> None:
     """
@@ -82,7 +91,7 @@ def create_window() -> None:
     player_group = pygame.sprite.GroupSingle()
     player_group.add(player)
 
-    enemy_generator = EnemyGenerator(125, player, 450, 600, window, 60)
+    enemy_generator = EnemyGenerator(100, player, 450, 600, window, 60)
 
     players_bullets = pygame.sprite.Group()
     enemies_bullets = pygame.sprite.Group()
@@ -93,6 +102,11 @@ def create_window() -> None:
 
     # Counter
     counter = PointsCounter()
+
+    # Timers
+    player_bullet_timer = set_timer(150, lambda : new_bullet(player, players_bullets))
+    enemy_bullet_timer = set_timer(300, lambda : new_bullet_for_group(enemy_generator.enemies, enemies_bullets))
+    enemy_generation_timer = set_timer(1000, lambda : enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png"))
 
     # Game loop
     running = True
@@ -109,16 +123,9 @@ def create_window() -> None:
 
         display_background(window, background_image, (-(x % WINDOW_WIDTH), -(y % WINDOW_HEIGHT)))
 
-        if (time := (pygame.time.get_ticks() - start_time)) % 10 == 0:
-            new_bullet(player, players_bullets)
-            if time % 40 == 0:
-                new_bullet_for_group(enemy_generator.enemies, enemies_bullets)
-
-
-        if pygame.time.get_ticks() - start_time >= 500:
-            enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png")
-            start_time = pygame.time.get_ticks()
-
+        player_bullet_timer()
+        enemy_bullet_timer()
+        enemy_generation_timer()
 
         counter.update_and_draw(window)
 
