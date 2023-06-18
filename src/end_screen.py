@@ -1,10 +1,7 @@
 import pygame
 import pygame_menu
 import csv
-
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
-
+import src.const as const
 
 def save_result(points, nickname, menu):
     with open('data/leaderboard.csv', 'a', newline='') as file:
@@ -25,7 +22,7 @@ def create_menu(theme, points):
     """
     This function creates a menu from given theme.
     """
-    menu = pygame_menu.Menu('', WINDOW_WIDTH, WINDOW_HEIGHT, theme=theme)
+    menu = pygame_menu.Menu('', const.WINDOW_WIDTH, const.WINDOW_HEIGHT, theme=theme)
     
     menu.add.label('Congratulations you died', font_color=(255, 255, 255))
     menu.add.vertical_margin(30)
@@ -38,7 +35,7 @@ def create_menu(theme, points):
 
 def end_game(points):
 
-    surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    surface = pygame.display.set_mode((const.WINDOW_WIDTH, const.WINDOW_HEIGHT))
 
     theme = pygame_menu.Theme(
                 background_color=(0, 0, 0, 0), # transparent background

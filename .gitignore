@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Data
-leaderboard.csv
+data/leaderboard.csv
 
 # C extensions
 *.so

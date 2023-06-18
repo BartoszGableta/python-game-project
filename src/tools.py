@@ -2,14 +2,13 @@ import pygame
 import math
 import random
 from src.entities import Enemy, Player
+import src.const as const
 
-DEFAULT_ENEMIES_BULLET_SIZE = (10, 10)
-DEFAULT_ENEMIES_BULLET_SPEED = 10
-DEFAULT_ENEMIES_BULLET_DAMAGE = 20
-DEFAULT_ENEMIES_BULLET_IMAGE = "assets/fire.png"
-ENEMIES_BULLET = (DEFAULT_ENEMIES_BULLET_SPEED, DEFAULT_ENEMIES_BULLET_DAMAGE, DEFAULT_ENEMIES_BULLET_SIZE, DEFAULT_ENEMIES_BULLET_IMAGE)
-
-DEFAULT_ENEMIES_ANGLE = 0
+ENEMIES_BULLET = (
+    const.DEFAULT_ENEMIES_BULLET_SPEED, 
+    const.DEFAULT_ENEMIES_BULLET_DAMAGE, 
+    const.DEFAULT_ENEMIES_BULLET_SIZE, 
+    const.DEFAULT_ENEMIES_BULLET_IMAGE)
 
 class EnemyGenerator:
     """
@@ -56,7 +55,7 @@ class EnemyGenerator:
 
             position = (player_x + x, player_y + y)
 
-            self.enemies.add(Enemy(size, position, speed, image, DEFAULT_ENEMIES_ANGLE, self.enemies_hp, ENEMIES_BULLET))
+            self.enemies.add(Enemy(size, position, speed, image, 0, self.enemies_hp, ENEMIES_BULLET))
 
     def recycle_enemies(self) -> None:
         """

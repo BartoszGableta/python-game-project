@@ -1,10 +1,7 @@
 import pygame
 import pygame_menu
-from src import window, end_screen
+from src import window, end_screen, const
 from typing import Callable
-
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
 
 
 def start_game() -> None:
@@ -35,16 +32,16 @@ def run_background_theme(music_file: str) -> None:
     This function runs the background theme.
     """
     pygame.mixer.music.load(music_file)
-    pygame.mixer.music.set_volume(0.05)
+    pygame.mixer.music.set_volume(const.MUSIC_VOLUME)
     pygame.mixer.music.play(-1)
 
 def create_menu(theme: pygame_menu.Theme) -> pygame_menu.Menu:
     """
     This function creates a menu from given theme.
     """
-    menu = pygame_menu.Menu('', WINDOW_WIDTH, WINDOW_HEIGHT, theme=theme)
+    menu = pygame_menu.Menu('', const.WINDOW_WIDTH, const.WINDOW_HEIGHT, theme=theme)
 
-    play_button_sound = create_sound('assets/click-sound.wav', 0.1)
+    play_button_sound = create_sound('assets/click-sound.wav', const.EFFECT_VOLUME)
     
     selection_effect = pygame_menu.widgets.HighlightSelection(border_width=0)
 
@@ -61,9 +58,9 @@ def main() -> None:
 
     pygame.init()
 
-    pygame.display.set_caption("Space survivor")
+    pygame.display.set_caption(const.WINDOW_NAME)
 
-    surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    surface = pygame.display.set_mode((const.WINDOW_WIDTH, const.WINDOW_HEIGHT))
 
     theme = pygame_menu.Theme(
                 background_color=(0, 0, 0, 0), # transparent background
@@ -73,12 +70,12 @@ def main() -> None:
                 widget_font_size=50)
 
     myimage = pygame_menu.baseimage.BaseImage(
-        image_path="assets/main-menu.jpg",
+        image_path=const.MAIN_MENU_BACKGROUND,
         drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
     )
     theme.background_color = myimage
 
-    run_background_theme('assets/main-menu-music.mp3')
+    run_background_theme(const.MAIN_MENU_MUSIC)
 
     menu = create_menu(theme)
     menu.mainloop(surface)

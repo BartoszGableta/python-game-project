@@ -2,9 +2,8 @@ import pygame
 import math
 import sys
 from src.entities import Character
+import src.const as const
 from typing import Callable
-
-DEFAULT_DAMAGE_POINTS = 5
 
 def get_closest_enemy(enemies: pygame.sprite.Group):
     """
@@ -31,8 +30,8 @@ def check_collisions(sprite_player: Character, sprites: pygame.sprite.Group):
     for enemy in gets_hit:
         enemy.stop_collisions(sprite_player.speed)
         sprite_player.stop_collisions(enemy.speed)
-        sprite_player.damage(DEFAULT_DAMAGE_POINTS)
-        enemy.damage(DEFAULT_DAMAGE_POINTS)
+        sprite_player.damage(const.DEFAULT_DAMAGE_POINTS)
+        enemy.damage(const.DEFAULT_DAMAGE_POINTS)
 
 def furthest_bullet_for_angle(bullets: pygame.sprite.Group):
     """
