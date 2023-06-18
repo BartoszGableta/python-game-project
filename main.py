@@ -32,7 +32,7 @@ def run_background_theme(music_file: str) -> None:
     This function runs the background theme.
     """
     pygame.mixer.music.load(music_file)
-    pygame.mixer.music.set_volume(0.05)
+    pygame.mixer.music.set_volume(const.MUSIC_VOLUME)
     pygame.mixer.music.play(-1)
 
 def create_menu(theme: pygame_menu.Theme) -> pygame_menu.Menu:
@@ -41,7 +41,7 @@ def create_menu(theme: pygame_menu.Theme) -> pygame_menu.Menu:
     """
     menu = pygame_menu.Menu('', const.WINDOW_WIDTH, const.WINDOW_HEIGHT, theme=theme)
 
-    play_button_sound = create_sound('assets/click-sound.wav', 0.1)
+    play_button_sound = create_sound('assets/click-sound.wav', const.EFFECT_VOLUME)
     
     selection_effect = pygame_menu.widgets.HighlightSelection(border_width=0)
 

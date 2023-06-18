@@ -7,15 +7,6 @@ from src.tools import EnemyGenerator, PointsCounter
 from src.entities import Player, Enemy, Bullet, Character
 from src.collisions import check_collisions, check_player_bullet_hits, check_enemies_bullet_hits
 
-DEFAULT_PLAYER_BULLET_SIZE = (10, 10)
-DEFAULT_PLAYER_BULLET_SPEED = 8
-DEFAULT_PLAYER_BULLET_DAMAGE = 50
-DEFAULT_PLAYER_BULLET_IMAGE = "assets/bullet.png"
-
-DEFAULT_ENEMY_SIZE = (50, 50)
-DEFAULT_ENEMY_SPEED = 1
-
-MUSIC_VOLUME = 0.05
 
 def display_background(window: pygame.Surface, background: pygame.Surface, offset: Tuple[int, int]) -> None:
     """
@@ -77,8 +68,22 @@ def create_window() -> None:
     pygame.display.set_caption(const.WINDOW_NAME)
     
 
-    players_bullet = (DEFAULT_PLAYER_BULLET_SPEED, DEFAULT_PLAYER_BULLET_DAMAGE, DEFAULT_PLAYER_BULLET_SIZE, DEFAULT_PLAYER_BULLET_IMAGE)
-    player = Player(const.DEFAULT_PLAYER_SIZE, const.DEFAULT_PLAYER_POSITION, const.DEFAULT_PLAYER_SPEED, const.PLAYER_IMAGE, 0, const.DEFAULT_PLAYER_HP, players_bullet)
+    players_bullet = (
+        const.DEFAULT_PLAYER_BULLET_DAMAGE, 
+        const.DEFAULT_PLAYER_BULLET_SIZE, 
+        const.DEFAULT_PLAYER_BULLET_IMAGE,
+        const.DEFAULT_PLAYER_BULLET_SPEED, 
+        )
+    
+    player = Player(
+        const.DEFAULT_PLAYER_SIZE, 
+        const.DEFAULT_PLAYER_POSITION, 
+        const.DEFAULT_PLAYER_SPEED, 
+        const.PLAYER_IMAGE, 
+        0, 
+        const.DEFAULT_PLAYER_HP, 
+        players_bullet
+        )
 
     # Loading the background image
     background_image = pygame.image.load(const.GAME_BACKGROUND).convert()
@@ -101,13 +106,11 @@ def create_window() -> None:
 
     # Clock
     clock = pygame.time.Clock()
-    start_time = pygame.time.get_ticks()
-
 
     # Music
     pygame.mixer.init()
     pygame.mixer.music.load("assets/game-theme.mp3")
-    pygame.mixer.music.set_volume(MUSIC_VOLUME)
+    pygame.mixer.music.set_volume(const.MUSIC_VOLUME)
     pygame.mixer.music.play(loops=-1)
 
     # Counter
@@ -116,7 +119,10 @@ def create_window() -> None:
     # Timers
     player_bullet_timer = set_timer(150, lambda : new_bullet(player, players_bullets))
     enemy_bullet_timer = set_timer(300, lambda : new_bullet_for_group(enemy_generator.enemies, enemies_bullets))
-    enemy_generation_timer = set_timer(1000, lambda : enemy_generator.generate_enemy(DEFAULT_ENEMY_SIZE, DEFAULT_ENEMY_SPEED, "assets/enemy.png"))
+    enemy_generation_timer = set_timer(
+        1000, 
+        lambda : enemy_generator.generate_enemy(const.DEFAULT_ENEMY_SIZE, const.DEFAULT_ENEMY_SPEED, const.ENEMY_IMAGE)
+        )
 
     # Game loop
     running = True
@@ -150,7 +156,7 @@ def create_window() -> None:
         player_group.update()
         
         check_collisions(player, enemy_generator.enemies)
-        check_player_bullet_hits(players_bullets, enemy_generator.enemies, lambda : counter.update_and_draw(window, 100))
+        check_player_bullet_hits(players_bullets, enemy_generator.enemies, lambda : counter.update_and_draw(window, const.KILL_POINTS))
         
         if check_enemies_bullet_hits(enemies_bullets, player):
             running = False
