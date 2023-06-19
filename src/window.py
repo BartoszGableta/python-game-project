@@ -69,10 +69,10 @@ def create_window() -> None:
     
 
     players_bullet = (
+        const.DEFAULT_PLAYER_BULLET_SPEED, 
         const.DEFAULT_PLAYER_BULLET_DAMAGE, 
         const.DEFAULT_PLAYER_BULLET_SIZE, 
-        const.DEFAULT_PLAYER_BULLET_IMAGE,
-        const.DEFAULT_PLAYER_BULLET_SPEED, 
+        const.PLAYER_BULLET_IMAGE
         )
     
     player = Player(
@@ -109,7 +109,7 @@ def create_window() -> None:
 
     # Music
     pygame.mixer.init()
-    pygame.mixer.music.load("assets/game-theme.mp3")
+    pygame.mixer.music.load(const.GAME_MUSIC)
     pygame.mixer.music.set_volume(const.MUSIC_VOLUME)
     pygame.mixer.music.play(loops=-1)
 
@@ -134,7 +134,6 @@ def create_window() -> None:
                 exit()
 
         handle_key_pressed(player)
-        print(pygame.mixer.music.get_pos())
         x, y = player.position
 
         display_background(window, background_image, (-(x % const.WINDOW_WIDTH), -(y % const.WINDOW_HEIGHT)))
@@ -155,7 +154,7 @@ def create_window() -> None:
         player_group.draw(window)
         player_group.update()
         
-        check_collisions(player, enemy_generator.enemies)
+        check_collisions(player, enemy_generator.enemies, lambda : counter.update_and_draw(window, const.KILL_POINTS))
         check_player_bullet_hits(players_bullets, enemy_generator.enemies, lambda : counter.update_and_draw(window, const.KILL_POINTS))
         
         if check_enemies_bullet_hits(enemies_bullets, player):

@@ -45,12 +45,12 @@ def end_game(points):
                 widget_font_size=30)
 
     myimage = pygame_menu.baseimage.BaseImage(
-        image_path="assets/end-screen.jpg",
+        image_path=const.END_SCREEN_BACKGROUND,
         drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
     )
     theme.background_color = myimage
 
-    run_background_theme('assets/end-screen-music.mp3')
+    run_background_theme(const.END_SCREEN_MUSIC)
 
     menu = create_menu(theme, points)
     menu.mainloop(surface)
